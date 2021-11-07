@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import * as api from 'users/api';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -12,13 +12,18 @@ const EditUserPage = () => {
     const { data: user, isError } = useQuery([`user`, userId], () => api.getUser(userId as unknown as number), {
         enabled: Boolean(userId),
     });
+    const queryClient = useQueryClient();
     const {
         mutate,
         status: mutateStatus,
         error: mutateError,
         isLoading,
         isSuccess,
-    } = useMutation((values: userInterface) => api.updateUser(values));
+    } = useMutation((values: userInterface) => api.updateUser(values), {
+        onSettled: () => {
+            queryClient.invalidateQueries('users');
+        },
+    });
     console.log({ mutateStatus, mutateError, isSuccess });
     const formik = useFormik({
         initialValues: user
