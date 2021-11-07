@@ -1,8 +1,7 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useFormik } from 'formik';
-import { validationSchema } from 'users/signUpSchema';
-import { Button, Center, Flex, FormControl, FormLabel, Heading, Input, Link, Text } from '@chakra-ui/react';
+import { Button, Center, Flex, FormControl, FormLabel, Heading, Input, Text } from '@chakra-ui/react';
 import * as api from 'users/api';
 import * as Yup from 'yup';
 
@@ -77,6 +76,7 @@ const Post = () => {
                         isError: false,
                         error: '',
                     });
+                    router.push('/');
                 }
             }}
         >
