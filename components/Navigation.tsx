@@ -3,20 +3,18 @@ import ColorModeToggle from 'components/ColorModeToggle';
 import { Box, Flex, IconButton, Link, Menu, MenuButton, MenuItem, MenuList, SimpleGrid } from '@chakra-ui/react';
 import Image from 'next/image';
 import { BsFillPersonFill } from 'react-icons/bs';
-import { FiLogOut, FiSettings } from 'react-icons/fi';
+import { FiLogOut } from 'react-icons/fi';
 import { signOut, useSession } from 'next-auth/client';
 import NextLink from 'next/link';
-import { useRouter } from 'next/router';
 
 const Navigation = () => {
-    const router = useRouter();
     const [session] = useSession();
     return (
         <SimpleGrid columns={2} spacing={10}>
             <Box>
                 <NextLink href="/" passHref>
                     <Link>
-                        <Image src="/logo.png" height="50px" width="237.8px" />
+                        <Image src="/logo.png" alt="procrew logo" height="50px" width="237.8px" />
                     </Link>
                 </NextLink>
             </Box>
@@ -26,11 +24,6 @@ const Navigation = () => {
                     <Menu>
                         <MenuButton as={IconButton} aria-label="sorted descending" icon={<BsFillPersonFill />} />
                         <MenuList>
-                            {session?.user?.email ? (
-                                <MenuItem icon={<FiSettings />} onClick={() => router.push('/settings')}>
-                                    Settings
-                                </MenuItem>
-                            ) : null}
                             <MenuItem icon={<FiLogOut />} onClick={() => signOut()}>
                                 Log out
                             </MenuItem>

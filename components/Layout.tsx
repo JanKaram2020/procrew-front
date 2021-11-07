@@ -23,25 +23,27 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         }
     }, [session, loading, router.pathname]);
     return (
-        <Box minHeight="100vh">
-            {loading ? (
-                <LoadingScreen />
-            ) : (
-                <Flex flexDirection="column" gridGap="20px" padding="20px">
-                    {session ? (
-                        <>
-                            <Navigation />
-                            {children}
-                        </>
-                    ) : (
-                        <>
-                            <Navigation />
-                            {children}
-                        </>
-                    )}
-                </Flex>
-            )}
-        </Box>
+        <>
+            <Box minHeight="100vh">
+                {loading ? (
+                    <LoadingScreen />
+                ) : (
+                    <Flex flexDirection="column" gridGap="20px" padding="20px">
+                        {session ? (
+                            <>
+                                <Navigation />
+                                {children}
+                            </>
+                        ) : (
+                            <>
+                                <Navigation />
+                                {children}
+                            </>
+                        )}
+                    </Flex>
+                )}
+            </Box>
+        </>
     );
 };
 
