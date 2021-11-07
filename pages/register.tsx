@@ -6,8 +6,10 @@ import { validationSchema } from 'users/signUpSchema';
 import { useState } from 'react';
 import NextLink from 'next/link';
 import { AiFillGithub } from 'react-icons/ai';
+import { useRouter } from 'next/router';
 
 const RegisterPage = () => {
+    const router = useRouter();
     const [{ isLoading, isSuccess, isError }, setState] = useState<{
         isLoading: boolean;
         isSuccess: boolean | null;
@@ -49,7 +51,24 @@ const RegisterPage = () => {
                 signIn('credentials', {
                     email: values.email,
                     password: values.password,
-                });
+                })
+                    .then((log) => {
+                        console.log(log);
+                        setState({
+                            isLoading: false,
+                            isSuccess: true,
+                            isError: false,
+                        });
+                        router.push('/');
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        setState({
+                            isLoading: false,
+                            isSuccess: false,
+                            isError: true,
+                        });
+                    });
             }
         },
     });

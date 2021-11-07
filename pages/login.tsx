@@ -28,20 +28,6 @@ const LoginPage = () => {
         validationSchema,
         onSubmit: async (values) => {
             console.log(values);
-            setState({
-                isLoading: true,
-                isSuccess: null,
-                isError: null,
-            });
-            console.log({
-                email: values.email,
-                password: values.password,
-            });
-            signIn('credentials', {
-                email: values.email,
-                password: values.password,
-                redirect: false,
-            }).then((error) => console.log(error));
         },
     });
     return (
