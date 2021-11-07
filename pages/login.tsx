@@ -58,7 +58,8 @@ const LoginPage = () => {
                 signIn('credentials', {
                     email: formik.values.email,
                     password: formik.values.password,
-                    redirect: false,
+                    redirect: true,
+                    callbackUrl: 'https://procrew-front.vercel.app/',
                 }).then((error) => {
                     console.log(error);
                     setState({
