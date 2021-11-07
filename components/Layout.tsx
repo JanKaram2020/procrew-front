@@ -12,7 +12,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     console.log({ session, loading });
     useEffect(() => {
         if (session) {
-            router.push('/');
             api.defaults.headers.common['Authorization'] = `Bearer ${session?.accessToken}`;
         }
         if (!session && !loading) {
