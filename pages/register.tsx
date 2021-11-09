@@ -52,7 +52,6 @@ const RegisterPage = () => {
                 email: values.email,
                 password: values.password,
             }).then((log) => {
-                console.log(log);
                 if (log?.error) {
                     setState({
                         isLoading: false,

@@ -33,7 +33,6 @@ const ForgetPasswordPage = () => {
             isError: null,
         });
         const res = await api.forgetPassword(formik.values.email);
-        console.log(res);
         if (res.name) {
             setState({
                 isLoading: false,
