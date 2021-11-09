@@ -3,28 +3,25 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import * as api from 'users/api';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Button, Center, Flex, FormControl, FormLabel, Heading, Input, Text } from '@chakra-ui/react';
+import { Button, Center, Flex, FormControl, FormLabel, Heading, Input, Spinner, Text } from '@chakra-ui/react';
 import { userInterface } from 'types/user';
 
 const EditUserPage = () => {
     const router = useRouter();
     const { id: userId } = router.query;
-    const { data: user, isError } = useQuery([`user`, userId], () => api.getUser(userId as unknown as number), {
+    const {
+        data: user,
+        isLoading: userLoading,
+        isError: userFetchingError,
+    } = useQuery([`user`, userId], () => api.getUser(userId as unknown as number), {
         enabled: Boolean(userId),
     });
     const queryClient = useQueryClient();
-    const {
-        mutate,
-        status: mutateStatus,
-        error: mutateError,
-        isLoading,
-        isSuccess,
-    } = useMutation((values: userInterface) => api.updateUser(values), {
+    const { mutate, isLoading, isSuccess, isError } = useMutation((values: userInterface) => api.updateUser(values), {
         onSettled: () => {
             queryClient.invalidateQueries('users');
         },
     });
-    console.log({ mutateStatus, mutateError, isSuccess });
     const formik = useFormik({
         initialValues: user
             ? user
@@ -56,34 +53,52 @@ const EditUserPage = () => {
             }}
         >
             <Heading>Edit user</Heading>
-            {isError ? <h3>Error fetching data</h3> : null}
-            <FormControl id="email">
-                <FormLabel>Email address</FormLabel>
-                <Input
-                    type="email"
-                    value={formik.values.email}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                />
-                {formik.touched.email && formik.errors.email ? <Text color="tomato">{formik.errors.email}</Text> : null}
-            </FormControl>
-            <FormControl id="name">
-                <FormLabel>Name</FormLabel>
-                <Input
-                    type="text"
-                    value={formik.values.name}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                />
-                {formik.touched.name && formik.errors.name ? <Text color="tomato">{formik.errors.name}</Text> : null}
-            </FormControl>
-            <Center>
-                <Button isLoading={isLoading} disabled={isLoading} type="submit" colorScheme="green">
-                    {!isError && !isSuccess ? 'Submit' : null}
-                    {isError ? 'error editing user' : null}
-                    {isSuccess ? 'Success' : null}
-                </Button>
-            </Center>
+            {userFetchingError ? (
+                <Heading fontSize="1rem" color="tomato">
+                    Error getting user, try again later
+                </Heading>
+            ) : null}
+            {userLoading ? (
+                <>
+                    <Heading fontSize="1rem">Loading user info</Heading>
+                    <Spinner size="xl" />
+                </>
+            ) : null}
+            {user ? (
+                <>
+                    <FormControl id="email">
+                        <FormLabel>Email address</FormLabel>
+                        <Input
+                            type="email"
+                            value={formik.values.email}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                        />
+                        {formik.touched.email && formik.errors.email ? (
+                            <Text color="tomato">{formik.errors.email}</Text>
+                        ) : null}
+                    </FormControl>
+                    <FormControl id="name">
+                        <FormLabel>Name</FormLabel>
+                        <Input
+                            type="text"
+                            value={formik.values.name}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                        />
+                        {formik.touched.name && formik.errors.name ? (
+                            <Text color="tomato">{formik.errors.name}</Text>
+                        ) : null}
+                    </FormControl>
+                    <Center>
+                        <Button isLoading={isLoading} disabled={isLoading} type="submit" colorScheme="green">
+                            {!isError && !isSuccess ? 'Submit' : null}
+                            {isError ? 'error editing user' : null}
+                            {isSuccess ? 'Success' : null}
+                        </Button>
+                    </Center>
+                </>
+            ) : null}
         </Flex>
     );
 };

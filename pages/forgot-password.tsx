@@ -26,6 +26,28 @@ const ForgetPasswordPage = () => {
             console.log(values);
         },
     });
+    const handleSubmit = async () => {
+        setState({
+            isLoading: true,
+            isSuccess: null,
+            isError: null,
+        });
+        const res = await api.forgetPassword(formik.values.email);
+        console.log(res);
+        if (res.name) {
+            setState({
+                isLoading: false,
+                isSuccess: false,
+                isError: true,
+            });
+        } else {
+            setState({
+                isLoading: false,
+                isSuccess: true,
+                isError: false,
+            });
+        }
+    };
     return (
         <>
             <Head>
@@ -38,25 +60,7 @@ const ForgetPasswordPage = () => {
                 width={['96vw', null, '30vw']}
                 onSubmit={async (e) => {
                     e.preventDefault();
-                    setState({
-                        isLoading: true,
-                        isSuccess: null,
-                        isError: null,
-                    });
-                    const res = await api.forgetPassword(formik.values.email);
-                    if (res.message) {
-                        setState({
-                            isLoading: false,
-                            isSuccess: true,
-                            isError: false,
-                        });
-                    } else {
-                        setState({
-                            isLoading: false,
-                            isSuccess: false,
-                            isError: true,
-                        });
-                    }
+                    handleSubmit();
                 }}
             >
                 <Heading>Forget password</Heading>
@@ -78,7 +82,14 @@ const ForgetPasswordPage = () => {
                         {isSuccess ? 'Success' : null}
                     </Button>
                 </Center>
-                <Center>{isSuccess ? <Text> check your email for your reset link </Text> : null}</Center>
+                <Center>
+                    {isSuccess ? (
+                        <Text>
+                            if an account exists with this email.
+                            <br /> an email with instructions will be sent to you.
+                        </Text>
+                    ) : null}
+                </Center>
                 <Center>{isError ? <Text> error sending email. try again later </Text> : null}</Center>
             </Flex>
         </>

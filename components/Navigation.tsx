@@ -24,7 +24,7 @@ const Navigation = () => {
                     <Menu>
                         <MenuButton as={IconButton} aria-label="sorted descending" icon={<BsFillPersonFill />} />
                         <MenuList>
-                            <MenuItem icon={<FiLogOut />} onClick={() => signOut()}>
+                            <MenuItem icon={<FiLogOut />} onClick={() => signOut({ redirect: false })}>
                                 Log out
                             </MenuItem>
                         </MenuList>

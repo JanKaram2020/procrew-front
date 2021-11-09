@@ -5,10 +5,10 @@ import { Button, Center, Flex, FormControl, FormLabel, Heading, Input, Text } fr
 import * as api from 'users/api';
 import * as Yup from 'yup';
 
-const Post = () => {
+const ForgetPasswordPage = () => {
     const router = useRouter();
     const { token: forgetToken, email } = router.query;
-    const [{ isLoading, isSuccess, isError }, setState] = useState<{
+    const [{ isLoading, isSuccess, isError, error }, setState] = useState<{
         isLoading: boolean;
         isSuccess: boolean | null;
         isError: boolean | null;
@@ -43,6 +43,35 @@ const Post = () => {
             console.log(values);
         },
     });
+    const handleSubmit = async () => {
+        setState({
+            isLoading: true,
+            isSuccess: null,
+            isError: null,
+            error: '',
+        });
+        const res = await api.updatePassword({
+            email: email as string,
+            newPassword: formik.values.newPassword,
+            token: forgetToken as string,
+        });
+        if (res.message.error) {
+            setState({
+                isLoading: false,
+                isSuccess: false,
+                isError: true,
+                error: res.message.error,
+            });
+        } else {
+            setState({
+                isLoading: false,
+                isSuccess: true,
+                isError: false,
+                error: '',
+            });
+            router.push('/');
+        }
+    };
     return (
         <Flex
             as="form"
@@ -51,33 +80,7 @@ const Post = () => {
             width={['96vw', null, '30vw']}
             onSubmit={async (e) => {
                 e.preventDefault();
-                setState({
-                    isLoading: true,
-                    isSuccess: null,
-                    isError: null,
-                    error: '',
-                });
-                const res = await api.updatePassword({
-                    email: email as string,
-                    newPassword: formik.values.newPassword,
-                    token: forgetToken as string,
-                });
-                if (res.message.error) {
-                    setState({
-                        isLoading: false,
-                        isSuccess: false,
-                        isError: true,
-                        error: res.message.error,
-                    });
-                } else {
-                    setState({
-                        isLoading: false,
-                        isSuccess: true,
-                        isError: false,
-                        error: '',
-                    });
-                    router.push('/');
-                }
+                handleSubmit();
             }}
         >
             <Heading>Change your password</Heading>
@@ -111,9 +114,9 @@ const Post = () => {
                     {isSuccess ? 'Success' : null}
                 </Button>
             </Center>
-            {isError ? <Text color="tomato">it seems email or password is incorrect try again</Text> : null}
+            {isError ? <Text color="tomato">{error}</Text> : null}
         </Flex>
     );
 };
 
-export default Post;
+export default ForgetPasswordPage;

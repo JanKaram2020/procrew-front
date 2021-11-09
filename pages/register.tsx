@@ -8,6 +8,7 @@ import NextLink from 'next/link';
 import { AiFillGithub } from 'react-icons/ai';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import { userRegisterInterface } from 'types/user';
 
 const RegisterPage = () => {
     const router = useRouter();
@@ -26,6 +27,54 @@ const RegisterPage = () => {
         isSuccess: null,
         isError: null,
     });
+    const handleSubmit = async (values: userRegisterInterface) => {
+        setState({
+            isLoading: true,
+            isSuccess: null,
+            isError: null,
+        });
+        const res = await api.register(values);
+        if (res.errors) {
+            setState({
+                isLoading: false,
+                isSuccess: false,
+                isError: true,
+            });
+            formik.setErrors(res.errors);
+        }
+        if (res.email) {
+            setState({
+                isLoading: false,
+                isSuccess: true,
+                isError: false,
+            });
+            signIn('credentials', {
+                email: values.email,
+                password: values.password,
+            }).then((log) => {
+                console.log(log);
+                if (log?.error) {
+                    setState({
+                        isLoading: false,
+                        isSuccess: false,
+                        isError: true,
+                    });
+                } else {
+                    setState({
+                        isLoading: false,
+                        isSuccess: true,
+                        isError: false,
+                    });
+                }
+            });
+        } else {
+            setState({
+                isLoading: false,
+                isSuccess: false,
+                isError: true,
+            });
+        }
+    };
     const formik = useFormik({
         initialValues: {
             email: '',
@@ -34,48 +83,7 @@ const RegisterPage = () => {
             passwordConfirmation: '',
         },
         validationSchema,
-        onSubmit: async (values) => {
-            setState({
-                isLoading: true,
-                isSuccess: null,
-                isError: null,
-            });
-            const res = await api.register(values);
-            if (res.errors) {
-                setState({
-                    isLoading: false,
-                    isSuccess: false,
-                    isError: true,
-                });
-                formik.setErrors(res.errors);
-            }
-            if (res.email) {
-                setState({
-                    isLoading: false,
-                    isSuccess: true,
-                    isError: false,
-                });
-                signIn('credentials', {
-                    email: values.email,
-                    password: values.password,
-                }).then((log) => {
-                    console.log(log);
-                    if (log?.error) {
-                        setState({
-                            isLoading: false,
-                            isSuccess: false,
-                            isError: true,
-                        });
-                    } else {
-                        setState({
-                            isLoading: false,
-                            isSuccess: true,
-                            isError: false,
-                        });
-                    }
-                });
-            }
-        },
+        onSubmit: (values) => handleSubmit(values),
     });
     return (
         <>
